@@ -32,6 +32,7 @@ var emitTuioEvent = (function emitTuioEventModule () {
 
     function emitTuioEvent (e) {
         var tuiobundle = prepareTuioBundle(e);
+        emit(tuiobundle);
     }
 
     function prepareTuioBundle (e) {
@@ -78,12 +79,10 @@ var emitTuioEvent = (function emitTuioEventModule () {
         return bundle;
     }
 
+    function emit(tuiobundle) {
+
+    }
+
     return emitTuioEvent;
 
 })();
-
-document.addEventListener('touchstart', emitTuioEvent, false);
-document.addEventListener('touchmove', emitTuioEvent, false);
-document.addEventListener('touchend', emitTuioEvent, false);
-document.addEventListener('touchcancel', emitTuioEvent, false);
-

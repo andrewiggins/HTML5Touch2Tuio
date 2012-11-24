@@ -27,6 +27,14 @@
 </head>
 <body>
 	<div id="div1"></div>
+
+	<script>
+		var div1 = document.getElementById('div1');
+		div1.addEventListener('touchstart', emitTuioEvent, false);
+		div1.addEventListener('touchmove', emitTuioEvent, false);
+		div1.addEventListener('touchend', emitTuioEvent, false);
+		div1.addEventListener('touchcancel', emitTuioEvent, false);
+	</script>
 </body>
 </html>
 
