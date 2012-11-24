@@ -31,13 +31,16 @@ var emitTuioEvent = (function emitTuioEventModule () {
         debug = true;
 
     function emitTuioEvent (e) {
+        var tuiobundle = prepareTuioBundle(e);
+    }
+
+    function prepareTuioBundle (e) {
         var touches = e.touches;
         var targetTouches = e.targetTouches;
         var changedTouches = e.changedTouches;
 
-        var msgs = []
-        
         var source = 'tuio.js-'+session_id+'@webbrowser';
+
         var srcmsg = {address: '/tuio/2Dcur', values: ['source', source]};
         var alivemsg = {address: '/tuio/2Dcur', values: ['alive']};
         var fseqmsg = {address: '/tuio/2Dcur', values: ['fseq', fseq]};
@@ -49,26 +52,30 @@ var emitTuioEvent = (function emitTuioEventModule () {
 
             alivemsg.values.push(touch.identifier);
 
-            // Set Msg Format: /tuio/2Dcur set s x y X Y m
+            // Set Msg Format: /tuio/2Dcur set s x y X Y m t
             var s = touch.identifier; // s: session id - int32
             var x = touch.clientX; // x: x position - float32, range 0..1
             var y = touch.clientY; // y: y position - float32, range 0..1
             var X = 0.0; // X: x velocity vector - float32
             var Y = 0.0; // Y: y velocity vector - float32
             var m = 0.0; // m: motion acceleration - float32
+            var t = touch.target; // t: Original DOM Element that finger first touched
 
-            newsetmsg.values = ['set', s, x, y, X, Y, m];
+            newsetmsg.values = ['set', s, x, y, X, Y, m, t];
             setmsgs.push(newsetmsg);
         }
 
-        msgs.push(srcmsg);
-        msgs.push(alivemsg);
-        msgs = msgs.concat(setmsgs);
-        msgs.push(fseqmsg);
+        var bundle = []
+        bundle.push(srcmsg);
+        bundle.push(alivemsg);
+        bundle = bundle.concat(setmsgs);
+        bundle.push(fseqmsg);
 
         fseq += 1;
 
-        if (debug) { console.log(event.type, msgs); }
+        if (debug) { console.log(event.type, bundle); }
+
+        return bundle;
     }
 
     return emitTuioEvent;
@@ -79,3 +86,4 @@ document.addEventListener('touchstart', emitTuioEvent, false);
 document.addEventListener('touchmove', emitTuioEvent, false);
 document.addEventListener('touchend', emitTuioEvent, false);
 document.addEventListener('touchcancel', emitTuioEvent, false);
+
