@@ -62,8 +62,8 @@ tuio.prepareTuioBundle = (function prepareTuioBundleModule () {
 
             // Set Msg Format: /tuio/2Dcur set s x y X Y m t
             var s = touch.identifier; // s: session id for touch - int32
-            var x = touch.clientX; // x: x position - float32, range 0..1
-            var y = touch.clientY; // y: y position - float32, range 0..1
+            var x = touch.clientX / window.innerWidth; // x: x position - float32, range 0..1
+            var y = touch.clientY / window.innerHeight; // y: y position - float32, range 0..1
             var X = 0.0; // X: x velocity vector - float32
             var Y = 0.0; // Y: y velocity vector - float32
             var m = 0.0; // m: motion acceleration - float32
