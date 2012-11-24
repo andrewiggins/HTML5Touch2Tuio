@@ -34,6 +34,10 @@
 		div1.addEventListener('touchmove', emitTuioEvent, false);
 		div1.addEventListener('touchend', emitTuioEvent, false);
 		div1.addEventListener('touchcancel', emitTuioEvent, false);
+
+		div1.addEventListener('tuiobundle', function (e) {
+			console.log(e.tuiobundle);
+		}, false);
 	</script>
 </body>
 </html>

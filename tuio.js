@@ -22,17 +22,17 @@
  *
  ******************************************************************************/
 
-// This session id is used to identify this client in the TUIO source message
+// This client id is used to identify this client in the TUIO source message
 // This can be replaced by a server-assigned id
-var session_id = Math.floor(Math.random() * 1000000);
+var client_id = Math.floor(Math.random() * 1000000);
 
 var emitTuioEvent = (function emitTuioEventModule () {
     var fseq = 0,
-        debug = true;
+        debug = false;
 
     function emitTuioEvent (e) {
         var tuiobundle = prepareTuioBundle(e);
-        emit(tuiobundle);
+        emit(tuiobundle, e.target);
     }
 
     function prepareTuioBundle (e) {
@@ -40,7 +40,7 @@ var emitTuioEvent = (function emitTuioEventModule () {
         var targetTouches = e.targetTouches;
         var changedTouches = e.changedTouches;
 
-        var source = 'tuio.js-'+session_id+'@webbrowser';
+        var source = 'tuio.js-'+client_id+'@webbrowser';
 
         var srcmsg = {address: '/tuio/2Dcur', values: ['source', source]};
         var alivemsg = {address: '/tuio/2Dcur', values: ['alive']};
@@ -54,7 +54,7 @@ var emitTuioEvent = (function emitTuioEventModule () {
             alivemsg.values.push(touch.identifier);
 
             // Set Msg Format: /tuio/2Dcur set s x y X Y m t
-            var s = touch.identifier; // s: session id - int32
+            var s = touch.identifier; // s: session id for touch - int32
             var x = touch.clientX; // x: x position - float32, range 0..1
             var y = touch.clientY; // y: y position - float32, range 0..1
             var X = 0.0; // X: x velocity vector - float32
@@ -79,7 +79,11 @@ var emitTuioEvent = (function emitTuioEventModule () {
         return bundle;
     }
 
-    function emit(tuiobundle) {
+    function emit(tuiobundle, target) {
+        var tuioevent = document.createEvent('Event');
+        tuioevent.initEvent('tuiobundle', true, true);
+        tuioevent.tuiobundle = tuiobundle;
+        target.dispatchEvent(tuioevent);
 
     }
 
