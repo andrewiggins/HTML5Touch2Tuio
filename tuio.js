@@ -22,25 +22,32 @@
  *
  ******************************************************************************/
 
+// Namespace to contain functions
+var tuio = {};
+
 // This client id is used to identify this client in the TUIO source message
 // This can be replaced by a server-assigned id
-var client_id = Math.floor(Math.random() * 1000000);
+tuio.client_id = Math.floor(Math.random() * 1000000);
 
-var emitTuioEvent = (function emitTuioEventModule () {
+tuio.emitTuioEvent = function (touchevent) {
+    var tuiobundle = tuio.prepareTuioBundle(touchevent);
+
+    var tuioevent = document.createEvent('Event');
+    tuioevent.initEvent('tuiobundle', true, true);
+    tuioevent.tuiobundle = tuiobundle;
+    touchevent.target.dispatchEvent(tuioevent);
+};
+
+tuio.prepareTuioBundle = (function prepareTuioBundleModule () {
     var fseq = 0,
         debug = false;
 
-    function emitTuioEvent (e) {
-        var tuiobundle = prepareTuioBundle(e);
-        emit(tuiobundle, e.target);
-    }
+    function prepareTuioBundle(touchevent) {
+        var touches = touchevent.touches;
+        var targetTouches = touchevent.targetTouches;
+        var changedTouches = touchevent.changedTouches;
 
-    function prepareTuioBundle (e) {
-        var touches = e.touches;
-        var targetTouches = e.targetTouches;
-        var changedTouches = e.changedTouches;
-
-        var source = 'tuio.js-'+client_id+'@webbrowser';
+        var source = 'tuio.js-'+tuio.client_id+'@webbrowser';
 
         var srcmsg = {address: '/tuio/2Dcur', values: ['source', source]};
         var alivemsg = {address: '/tuio/2Dcur', values: ['alive']};
@@ -60,6 +67,9 @@ var emitTuioEvent = (function emitTuioEventModule () {
             var X = 0.0; // X: x velocity vector - float32
             var Y = 0.0; // Y: y velocity vector - float32
             var m = 0.0; // m: motion acceleration - float32
+
+            // Although the TUIO specification doesn't include target, I tought
+            // it might be useful for event handlers to have
             var t = touch.target; // t: Original DOM Element that finger first touched
 
             newsetmsg.values = ['set', s, x, y, X, Y, m, t];
@@ -74,19 +84,10 @@ var emitTuioEvent = (function emitTuioEventModule () {
 
         fseq += 1;
 
-        if (debug) { console.log(event.type, bundle); }
+        if (debug) { console.log(touchevent.type, bundle); }
 
         return bundle;
     }
 
-    function emit(tuiobundle, target) {
-        var tuioevent = document.createEvent('Event');
-        tuioevent.initEvent('tuiobundle', true, true);
-        tuioevent.tuiobundle = tuiobundle;
-        target.dispatchEvent(tuioevent);
-
-    }
-
-    return emitTuioEvent;
-
+    return prepareTuioBundle;
 })();

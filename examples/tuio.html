@@ -30,10 +30,10 @@
 
 	<script>
 		var div1 = document.getElementById('div1');
-		div1.addEventListener('touchstart', emitTuioEvent, false);
-		div1.addEventListener('touchmove', emitTuioEvent, false);
-		div1.addEventListener('touchend', emitTuioEvent, false);
-		div1.addEventListener('touchcancel', emitTuioEvent, false);
+		div1.addEventListener('touchstart', tuio.emitTuioEvent, false);
+		div1.addEventListener('touchmove', tuio.emitTuioEvent, false);
+		div1.addEventListener('touchend', tuio.emitTuioEvent, false);
+		div1.addEventListener('touchcancel', tuio.emitTuioEvent, false);
 
 		div1.addEventListener('tuiobundle', function (e) {
 			console.log(e.tuiobundle);
